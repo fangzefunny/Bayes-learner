@@ -130,15 +130,17 @@ class BayesLearner():
         '''
         # get p(yt|rt): dim: rt
         p_y1r = bernoulli.pmf( y, self.r_space)
-        # ∑∑ blablablabla
+        # ∑i p(vt|vt-1=i, k) δ(i,rt-1,k)
         # dim: vt vt-1 @ vt-1, rt-1 --> vt, rt-1
         delta1 = np.zeros( [self.n_split]*3) 
         for k in range(self.n_split):
             delta1[:,:,k] = self.p_V1VK[:,:,k] @ self.delta[:,:,k]
+        # ∑j p(rt|vt, rt-1=j) δ(vt,j,k)
         # dim:  rt rt-1 @ rt-1, k = rt k 
         delta2 = np.zeros( [self.n_split]*3) 
         for i in range(self.n_split):
             delta2[i,:,:] = self.p_R1VR[:,i,:]@delta1[i,:,:]
+        # δ(vt,j,k) * p(y|rt=j)
         # get new delta: vt, rt, k
         delta = p_y1r[ np.newaxis, :, np.newaxis] * delta2
         self.delta = delta / delta.sum()
@@ -151,7 +153,8 @@ class BayesLearner():
 #-----------------------
 
 def fig1_volVar():
-
+    '''Understand the reparameterized beta
+    '''
     v_space = np.linspace( -11,  -2, 50)
     b_vars  = np.zeros_like( v_space)
     for i, v in enumerate(v_space):
@@ -165,6 +168,8 @@ def fig1_volVar():
     plt.savefig( 'figures/fig1_volVar.png', dpi=dpi)
 
 def fig2_sim():
+    '''Simulate the experiment
+    '''
 
     data, pTrue = get_data()
     model = BayesLearner()
@@ -187,7 +192,7 @@ def fig2_sim():
 
 if __name__ == '__main__':
 
-    #fig1_volVar()
+    fig1_volVar()
     fig2_sim()
 
 
