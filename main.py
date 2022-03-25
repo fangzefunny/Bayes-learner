@@ -59,11 +59,6 @@ def rbeta( r, v):
 
     r = a / (a+b)
     v = -log(a+b)
-
-    Inputs:
-        r_space: the discrete space for parameter r
-        r: the value of r to infer the alpha parameter
-        v: the 
     '''
     a = r*np.exp(-v)
     b = np.exp(-v)*(1-r)
@@ -79,10 +74,10 @@ class BayesLearner():
         self._init_delta()
 
     def _discretize( self,):
-        '''Implement all known conditions
+        '''Discretize all variables
             r: reward probability
-            v: the value of the space
-            k: the volatility
+            v: the volatility
+            k: the variance of volatitity
 
             Default dim convention:
             dim: yt, vt, rt, vt-1, rt-1, k
